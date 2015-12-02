@@ -8,6 +8,7 @@ import com.grishberg.parser.ResultWriter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,23 +33,7 @@ public class Aggregator implements IAggregator {
     @Override
     synchronized public void putResults(List<ResultContainer> results) {
         boolean isFound = false;
-        for (ResultContainer result : results) {
-            /*for (int i = 0; i < data.size(); i++) {
-                ResultContainer currentResult = data.get(i);
-                isFound = false;
-                if (currentResult.getKey().compareTo(result.getKey()) == 0) {
-                    isFound = true;
-                    currentResult.addData(result.getData());
-                    break;
-                }
-            }*/
-            if (!isFound) {
-                ResultContainer container = new ResultContainer();
-                container.setKey(result.getKey());
-                container.addData(result.getData());
-                data.add(container);
-            }
-        }
+        data.addAll(results);
 
         responseCount++;
         if (fraction == 0 || responseCount % fraction == 0) {
@@ -63,17 +48,45 @@ public class Aggregator implements IAggregator {
             file.mkdirs();
         }
         boolean isFirst = true;
-        ResultWriter writer = new ResultWriter(fileName + "/result.json");
-        writer.write("{\"result\":[\n");
+        boolean isFirstData = true;
 
-        for (ResultContainer resultContainer : data) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                writer.write(",\n");
+        long startTime = System.currentTimeMillis();
+        Collections.sort(data);
+        long endTime = System.currentTimeMillis();
+        System.out.printf("sort time = %d ms, sort count =%d\n", endTime - startTime, data.size());
+
+        String lastKey = null;
+        if (data.size() > 0) {
+            lastKey = data.get(0).getKey();
+        }
+
+        ResultWriter writer = new ResultWriter(fileName + "/result.json");
+        writer.write(String.format("{\"result\":[\n\t{\n\t\t\"key\":\"%s\",\n\t\t\"data\":["
+                , lastKey ));
+
+        int count = 0;
+        for (int i = 0; i < data.size(); i++) {
+            ResultContainer resultContainer = data.get(i);
+            count++;
+
+            if (!resultContainer.getKey().equals(lastKey)) {
+                writer.write(String.format("],\n\t\t\"count\":%d\n\t}", count));
+                if (i < data.size() - 1) {
+                    writer.write(String.format(",\n\t{\n\t\t\"key\":%s\",\n\t\t\"data\":["
+                            , resultContainer.getKey()));
+                    isFirstData = true;
+                }
+                count = 0;
+            }
+            if(isFirstData){
+                isFirstData = false;
+            }else {
+                writer.write(",");
             }
             writer.write(resultContainer.toString());
+            lastKey = resultContainer.getKey();
         }
+        writer.write(String.format("\t\t],\n\t\t\"count\":%d\n\t}", count));
         writer.write("\n\t]\n}");
         writer.close();
         return data.size();

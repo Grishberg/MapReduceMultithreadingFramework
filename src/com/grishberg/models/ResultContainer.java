@@ -6,37 +6,34 @@ import java.util.List;
 /**
  * Created by g on 08.11.15.
  */
-public class ResultContainer {
-    private KeyContainer key;
-    private List<UserInfoContainer> data;
+public class ResultContainer implements Comparable<ResultContainer> {
+    private String key;
+    private UserInfoContainer data;
 
     public ResultContainer() {
         key = null;
-        data = new ArrayList<>();
     }
 
-    public void setKey(KeyContainer key) {
+    public void setKey(String key) {
         this.key = key;
     }
 
-    public void addData(List<UserInfoContainer> newData) {
-        data.addAll(newData);
+    public void setData(UserInfoContainer newData) {
+        data = newData;
     }
 
-    public void addData(UserInfoContainer newData) {
-        data.add(newData);
-    }
-
-    public KeyContainer getKey() {
+    public String getKey() {
         return key;
     }
 
-    public List<UserInfoContainer> getData() {
+    public UserInfoContainer getData() {
         return data;
     }
 
     @Override
     public String toString() {
+        return data.toString();
+        /*
         boolean isFirst = true;
         StringBuilder sb = new StringBuilder();
         sb.append("\t{\"key\":").append(key.toString()).append(",\n\t\"data\":[");
@@ -50,5 +47,17 @@ public class ResultContainer {
         }
         sb.append("]\n\t}");
         return sb.toString();
+        */
+    }
+
+    @Override
+    public int compareTo(ResultContainer o) {
+        if (key == null) {
+            return -1;
+        }
+        if (o == null) {
+            return 1;
+        }
+        return key.compareTo(o.key);
     }
 }

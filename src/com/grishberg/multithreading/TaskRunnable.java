@@ -52,11 +52,10 @@ public class TaskRunnable implements Runnable {
                     strKey = filter.get(i);
                     if (url != null && url.contains(strKey)) {
                         //System.out.printf(" >> key=%s, url=%s\n",strKey, url);
-                        KeyContainer key = new KeyContainer(url);
                         UserInfoContainer userInfo = new UserInfoContainer();
                         userInfo.setUserId(columns.userId);
                         userInfo.setUserIp(columns.userIp);
-                        putResults(key, userInfo);
+                        putResults(url, userInfo);
                     }
                 }
             }
@@ -68,21 +67,11 @@ public class TaskRunnable implements Runnable {
         aggregator.putResults(data);
     }
 
-    private void putResults(KeyContainer key, UserInfoContainer results) {
-        boolean isFound = false;
-        for (int i = 0; i < data.size(); i++) {
-            ResultContainer currentResult = data.get(i);
-            if (currentResult.getKey().compareTo(key) == 0) {
-                isFound = true;
-                currentResult.addData(results);
-                break;
-            }
-        }
-        if (!isFound) {
-            ResultContainer container = new ResultContainer();
-            container.setKey(key);
-            container.addData(results);
-            data.add(container);
-        }
+    private void putResults(String key, UserInfoContainer results) {
+
+        ResultContainer container = new ResultContainer();
+        container.setKey(key);
+        container.setData(results);
+        data.add(container);
     }
 }

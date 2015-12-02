@@ -26,9 +26,9 @@ public class UserInfoContainer {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("\n\t\t{");
-        sb.append("\"userId\":\"").append(userId);
-        sb.append("\",\n\t\t\"userIp\":\"").append(userIp);
+        sb.append("\n\t\t{\n");
+        sb.append("\t\t\t\"userId\":\"").append(userId);
+        sb.append("\",\n\t\t\t\"userIp\":\"").append(userIp);
         sb.append("\"\n\t\t}");
         return sb.toString();
     }
