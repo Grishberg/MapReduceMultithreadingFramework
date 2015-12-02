@@ -33,7 +33,7 @@ public class Aggregator implements IAggregator {
     synchronized public void putResults(List<ResultContainer> results) {
         boolean isFound = false;
         for (ResultContainer result : results) {
-            for (int i = 0; i < data.size(); i++) {
+            /*for (int i = 0; i < data.size(); i++) {
                 ResultContainer currentResult = data.get(i);
                 isFound = false;
                 if (currentResult.getKey().compareTo(result.getKey()) == 0) {
@@ -41,7 +41,7 @@ public class Aggregator implements IAggregator {
                     currentResult.addData(result.getData());
                     break;
                 }
-            }
+            }*/
             if (!isFound) {
                 ResultContainer container = new ResultContainer();
                 container.setKey(result.getKey());
@@ -49,6 +49,7 @@ public class Aggregator implements IAggregator {
                 data.add(container);
             }
         }
+
         responseCount++;
         if (fraction == 0 || responseCount % fraction == 0) {
             float per = ((float) responseCount / (float) mappersCount) * 100.0f;
