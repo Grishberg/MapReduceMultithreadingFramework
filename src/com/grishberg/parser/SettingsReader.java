@@ -3,6 +3,7 @@ package com.grishberg.parser;
 /**
  * Created by fesswood on 29.10.15.
  */
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.Scanner;
  * Created by fesswood on 29.10.15.
  */
 public class SettingsReader {
-
     private final File currentFile;
     public ArrayList<String> resultArray;
     String propFileName = "config.properties";
@@ -21,7 +21,7 @@ public class SettingsReader {
     InputStream inputStream;
 
     public SettingsReader(String file) {
-        if(file != null){
+        if (file != null) {
             propFileName = file;
         }
         currentFile = new File(file);
@@ -30,10 +30,11 @@ public class SettingsReader {
 
     /**
      * читаем файл
+     *
      * @param splitString
      * @return
      */
-    public ArrayList<String> readProperty(String splitString){
+    public ArrayList<String> readProperty(String splitString) {
         try {
             Scanner input = new Scanner(new FileInputStream(currentFile));
             while (input.hasNextLine()) {
@@ -46,7 +47,6 @@ public class SettingsReader {
                 System.out.println(line);
             }
             input.close();
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -55,6 +55,7 @@ public class SettingsReader {
 
     /**
      * Читаем проперти внутри проекта
+     *
      * @param splitString
      * @return
      * @throws IOException
@@ -74,7 +75,7 @@ public class SettingsReader {
             for (int i = 0; i < splitedLine.length; i++) {
                 resultArray.add(splitedLine[i].trim());
             }
-            System.out.println("urls "+urls);
+            System.out.println("urls " + urls);
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
@@ -85,12 +86,13 @@ public class SettingsReader {
 
     /**
      * Читаем проперти не внутри проекта
+     *
      * @param ExternalProperty
      * @param splitString
      * @return
      * @throws IOException
      */
-    public ArrayList<String> getExternalPropValues(String externalProperty,String splitString) throws IOException {
+    public ArrayList<String> getExternalPropValues(String externalProperty, String splitString) throws IOException {
         resultArray.clear();
         try {
             Properties prop = new Properties();
@@ -103,22 +105,23 @@ public class SettingsReader {
             String urls = prop.getProperty("urls");
             String[] splitedLine = urls.split(splitString);
             for (int i = 0; i < splitedLine.length; i++) {
-                resultArray.add(splitedLine[i]);
+                resultArray.add(splitedLine[i].trim());
             }
-            System.out.println("urls "+urls);
+            System.out.println("urls " + urls);
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
-            if(inputStream != null){
+            if (inputStream != null) {
                 inputStream.close();
-            };
+            }
+            ;
         }
         return resultArray;
     }
 
     public List<String> getUrls() {
         try {
-            return getExternalPropValues(propFileName , ",");
+            return getExternalPropValues(propFileName, ",");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -47,8 +47,11 @@ public class TaskRunnable implements Runnable {
                 if (columns == null) continue;
                 if (columns.dstHost.length() == 0) continue;
                 String url = columns.dstHost + columns.dstParam;
+                String strKey = null;
                 for (int i = 0; i < filter.size(); i++) {
-                    if (url != null && url.contains(filter.get(i))) {
+                    strKey = filter.get(i);
+                    if (url != null && url.contains(strKey)) {
+                        //System.out.printf(" >> key=%s, url=%s\n",strKey, url);
                         KeyContainer key = new KeyContainer(url);
                         UserInfoContainer userInfo = new UserInfoContainer();
                         userInfo.setUserId(columns.userId);

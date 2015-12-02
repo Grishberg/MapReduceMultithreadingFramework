@@ -23,7 +23,7 @@ public class Main {
         aggregator = new Aggregator();
         SettingsReader settingsReader = new SettingsReader(configPath);
         List<String> filter = settingsReader.getUrls();
-        System.out.println("LogChecker v1.0");
+        System.out.println("LogChecker v1.0.1");
         System.out.println(String.format("cores count = %d", CPU_COUNT));
         long startTime = System.currentTimeMillis();
 
