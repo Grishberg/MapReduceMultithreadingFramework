@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JobClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JobClient_jar</output-path>
+    <root id="archive" name="JobClient.jar">
+      <element id="module-output" name="JobClient" />
+      <element id="module-output" name="Common" />
+      <element id="module-output" name="TcpServerClientCommon" />
+    </root>
+  </artifact>
+</component>
