@@ -7,9 +7,13 @@ import com.grishberg.models.UserInfoContainer;
 import com.grishberg.parser.ResultWriter;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by g on 08.11.15.
@@ -19,6 +23,8 @@ public class Aggregator implements IAggregator {
     private long mappersCount;
     private long responseCount;
     private int fraction;
+    DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+    private static Logger log = Logger.getLogger(Aggregator.class.getName());
 
     public Aggregator() {
         data = new ArrayList<>();
@@ -32,13 +38,17 @@ public class Aggregator implements IAggregator {
 
     @Override
     synchronized public void putResults(List<ResultContainer> results) {
-        boolean isFound = false;
         data.addAll(results);
 
         responseCount++;
         if (fraction == 0 || responseCount % fraction == 0) {
             float per = ((float) responseCount / (float) mappersCount) * 100.0f;
-            System.out.println(String.format("reduce %f", per));
+
+            Date date = new Date();
+            String dateFormatted = formatter.format(date);
+            String msg = String.format("[%s] reduce %f, total count = %d", dateFormatted, per, data.size());
+            System.out.println(msg);
+            log.info(msg);
         }
     }
 
@@ -62,7 +72,7 @@ public class Aggregator implements IAggregator {
 
         ResultWriter writer = new ResultWriter(fileName + "/result.json");
         writer.write(String.format("{\"result\":[\n\t{\n\t\t\"key\":\"%s\",\n\t\t\"data\":["
-                , lastKey ));
+                , lastKey));
 
         int count = 0;
         for (int i = 0; i < data.size(); i++) {
@@ -78,9 +88,9 @@ public class Aggregator implements IAggregator {
                 }
                 count = 0;
             }
-            if(isFirstData){
+            if (isFirstData) {
                 isFirstData = false;
-            }else {
+            } else {
                 writer.write(",");
             }
             writer.write(resultContainer.toString());

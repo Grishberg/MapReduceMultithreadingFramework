@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/LogCheckerJava_jar</output-path>
     <root id="archive" name="LogCheckerJava.jar">
       <element id="module-output" name="LogCheckerJava" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/notifier.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

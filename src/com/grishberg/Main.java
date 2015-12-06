@@ -5,11 +5,16 @@ import com.grishberg.parser.SettingsReader;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import com.grishberg.notifier.EmailNotifier;
 
 /**
  * Created by g on 07.11.15.
@@ -17,13 +22,14 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     private Aggregator aggregator;
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
-    private ExecutorService executor = Executors.newFixedThreadPool(CPU_COUNT * 2);
+    private ExecutorService executor = Executors.newFixedThreadPool(CPU_COUNT );
+    private DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
 
     public Main(String inPath, String outPath, String configPath) {
         aggregator = new Aggregator();
         SettingsReader settingsReader = new SettingsReader(configPath);
         List<String> filter = settingsReader.getUrls();
-        System.out.println("LogChecker v1.0.3");
+        System.out.println("LogChecker v1.0.5");
         System.out.println(String.format("cores count = %d", CPU_COUNT));
         long startTime = System.currentTimeMillis();
 
@@ -50,10 +56,29 @@ public class Main {
         int resultCount = aggregator.printResults(outPath);
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
-        String msg = String.format("Done. result count = %d \n running time = %d ms\n"
+        String sTime = ms2String(totalTime);
+
+        Date date = new Date();
+        String dateFormatted = formatter.format(date);
+
+        String msg = String.format("Done. result count = %d \n running time = %d ms, %s\n %s\n"
                 , resultCount
-                , totalTime);
+                , totalTime
+                , sTime
+                , dateFormatted);
         System.out.println(msg);
+        EmailNotifier.sendNotify("grishberg@gmail.com", "Java log checker status"
+                , msg);
+    }
+
+    private String ms2String(long millis) {
+
+        long second = TimeUnit.MILLISECONDS.toSeconds(millis);
+        long minute = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long hour = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.SECONDS.toMillis(second);
+
+        return String.format("%02d:%02d:%02d:%d", hour, minute, second, millis);
     }
 
     public static void main(String[] args) {

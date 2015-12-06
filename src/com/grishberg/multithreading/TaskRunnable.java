@@ -51,7 +51,9 @@ public class TaskRunnable implements Runnable {
                 for (int i = 0; i < filter.size(); i++) {
                     strKey = filter.get(i);
                     if (url != null && url.contains(strKey)) {
-                        //System.out.printf(" >> key=%s, url=%s\n",strKey, url);
+                        if(strKey.contains("testhost.ru")) {
+                            System.out.printf(" >> key=%s, url=%s\n",strKey, url);
+                        }
                         UserInfoContainer userInfo = new UserInfoContainer();
                         userInfo.setUserId(columns.userId);
                         userInfo.setUserIp(columns.userIp);
